@@ -1,0 +1,1 @@
+Any customizations to ArkCase JSPs (login, reset-password, etc) or any new JSP view should be located here.

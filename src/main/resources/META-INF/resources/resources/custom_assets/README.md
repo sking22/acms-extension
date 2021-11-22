@@ -1,0 +1,1 @@
+Any customizations to ArkCase assets or any new asset should be located here.

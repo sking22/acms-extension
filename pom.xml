@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>com.armedia.arkcase</groupId>
+    <artifactId>starter</artifactId>
+    <packaging>jar</packaging>
+    <version>1.0.0-RELEASE</version>
+
+    <name>ArkCase Extension Starter POM</name>
+    <description>A sample ArkCase Extension maven pom</description>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <java.version>1.8</java.version>
+        <easymock.version>4.1</easymock.version>
+        <easymock-extension.version>3.2</easymock-extension.version>
+        <hamcrest.version>1.3</hamcrest.version>
+        <junit.version>4.12</junit.version>
+        <maven-jgitflow-plugin.version>1.0-m5.1</maven-jgitflow-plugin.version>
+        <sonarqube.version>3.5.0.1254</sonarqube.version>
+        <spring.version>4.3.27.RELEASE</spring.version>
+
+        <!-- ArkCase version to use -->
+        <arkcase.version>2021.02</arkcase.version>
+
+        <!-- Classifier for your extension -->
+        <extension.classifier>training</extension.classifier>
+    </properties>
+    <build>
+        <plugins>
+
+            <!-- Include ArkCase artifacts in builds -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>2.8</version>
+                <executions>
+                    <execution>
+                        <id>copy-arkcase-dependencies</id>
+                        <goals>
+                            <goal>copy</goal>
+                        </goals>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>com.armedia.acm.acm-standard-applications</groupId>
+                                    <artifactId>arkcase</artifactId>
+                                    <!-- Optional classifier if you must use snapshot-builds that different from
+                                        the current official snapshots -->
+                                    <!-- <classifier>${extension.classifier}</classifier> -->
+                                    <version>${arkcase.version}</version>
+                                    <type>war</type>
+                                    <overWrite>true</overWrite>
+                                    <destFileName>arkcase.war</destFileName>
+                                </artifactItem>
+                            </artifactItems>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- This plugin builds fat jar with all required dependencies defined in pom.xml-->
+            <!--<plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>2.4.3</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <createDependencyReducedPom>false</createDependencyReducedPom>
+                            <artifactSet>
+                                <includes>
+                                    &lt;!&ndash; Add any external dependencies to package with jar that isn't present in core &ndash;&gt;
+                                </includes>
+                            </artifactSet>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>-->
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.1</version>
+                <configuration>
+                    <encoding>${project.build.sourceEncoding}</encoding>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
+                    <compilerVersion>${java.version}</compilerVersion>
+                    <compilerArgument>-Xlint:all</compilerArgument>
+                    <showWarnings>true</showWarnings>
+                    <showDeprecation>true</showDeprecation>
+                </configuration>
+            </plugin>
+
+            <!-- Git Flow -->
+            <plugin>
+                <groupId>external.atlassian.jgitflow</groupId>
+                <artifactId>jgitflow-maven-plugin</artifactId>
+                <version>${maven-jgitflow-plugin.version}</version>
+                <configuration>
+                    <flowInitContext>
+                        <versionTagPrefix>${extension.classifier}</versionTagPrefix>
+                    </flowInitContext>
+                    <autoVersionSubmodules>true</autoVersionSubmodules>
+                    <keepBranch>false</keepBranch>
+                    <pushReleases>true</pushReleases>
+                    <allowUntracked>true</allowUntracked>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>feature-branches</id>
+                        <goals>
+                            <goal>feature-start</goal>
+                        </goals>
+                        <configuration>
+                            <allowSnapshots>true</allowSnapshots>
+                            <allowUntracked>true</allowUntracked>
+                            <enableFeatureVersions>false</enableFeatureVersions>
+                            <flowInitContext>
+                                <featureBranchPrefix>feature-</featureBranchPrefix>
+                            </flowInitContext>
+                            <pushFeatures>true</pushFeatures>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- Optional SonarQube integration
+            <plugin>
+                <groupId>org.sonarsource.scanner.maven</groupId>
+                <artifactId>sonar-maven-plugin</artifactId>
+                <version>${sonarqube.version}</version>
+            </plugin>
+            -->
+        </plugins>
+    </build>
+    <distributionManagement>
+        <snapshotRepository>
+            <id>armedia.snapshot</id>
+            <name>Armedia Snapshot Maven Repository</name>
+            <url>https://project.armedia.com/nexus/content/repositories/armedia.snapshot</url>
+        </snapshotRepository>
+        <repository>
+            <id>armedia.release</id>
+            <name>Armedia Release Maven Repository</name>
+            <url>https://project.armedia.com/nexus/content/repositories/armedia.release</url>
+        </repository>
+    </distributionManagement>
+
+    <!-- add dependencies -->
+    <dependencies>
+        <dependency>
+            <groupId>org.eclipse.persistence</groupId>
+            <artifactId>javax.persistence</artifactId>
+            <version>2.1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-annotations</artifactId>
+            <version>2.10.3</version>
+        </dependency>
+        <dependency>
+            <groupId>com.voodoodyne.jackson.jsog</groupId>
+            <artifactId>jackson-jsog</artifactId>
+            <version>1.1.1</version>
+        </dependency>
+
+        <!-- ArkCase Core dependencies -->
+        <dependency>
+            <groupId>com.armedia.acm.acm-plugins.acm-default-plugins</groupId>
+            <artifactId>acm-complaint-plugin</artifactId>
+            <version>${arkcase.version}</version>
+        </dependency>
+
+    </dependencies>
+</project>
